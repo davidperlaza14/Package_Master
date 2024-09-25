@@ -41,6 +41,7 @@ def actualizar_paquete(paquete):
         print(resultado.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Error al intentar actualizar el paquete '{paquete}': {e.stderr}")
+        print(f"Error al intentar actualizar el paquete '{paquete}': {e.stderr}")
 
 def desinstalar_paquete(paquete):
     try:
