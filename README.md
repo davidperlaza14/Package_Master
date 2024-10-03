@@ -2,6 +2,30 @@
 
 ##  ***A Comprehensive Package Management and Automation System with JWT Authentication***
 
+
+# Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Key Features](#key-features)
+3. [Project Structure](#project-structure)
+4. [System Requirements](#system-requirements)
+5. [Getting Started](#getting-started)
+   - [Clone the Repository](#clone-the-repository)
+   - [Execution Example](#execution-example)
+   - [Environment Setup](#environment-setup)
+   - [Build the Docker Image](#build-the-docker-image)
+   - [Run the Application](#run-the-application)
+6. [Authentication](#authentication)
+7. [Package Management](#package-management)
+8. [Testing](#testing)
+9. [Security](#security)
+10. [Roadmap](#roadmap)
+11. [Contributing](#contributing)
+12. [License](#license)
+13. [Contact](#contact)
+
+
+
 ## 📖 Project Overview
 **Package Master** is an advanced system designed to simplify and automate the installation, upgrading, uninstallation, and listing of Python packages through a command-line interface (CLI). With robust JWT-based authentication, it ensures that only authenticated users can access or modify the packages. This project leverages Docker for containerization, making it easy to deploy, maintain, and scale across different environments.
 
@@ -47,8 +71,11 @@ To run Package Master, you’ll need the following:
 
 ## 🚀 Getting Started
 ### 1. **Clone the Repository**
-    git clone https://github.com/yourusername/package-master.git
+    git clone https://github.com/yourusername/package-master.
     cd package-master
+
+### Execution example:
+
 
 ### 2. Environment Setup
 Set up your environment variables by running the setup_env.sh script. You can specify the DATABASE_URL for the system to use your preferred database.
@@ -139,3 +166,9 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## 🌟 Contact
 Feel free to contact me via email at yourname@domain.com if you have any questions or suggestions. Let’s build something amazing together!
+
+# Sistema de Gestión de Paquetería con Autenticación JWT
+
+Este proyecto es una CLI (Command Line Interface) que permite gestionar paquetes Python mediante comandos para instalar, actualizar, desinstalar y listar paquetes. La aplicación usa autenticación basada en tokens JWT para proteger el acceso a estas operaciones.
+
+

@@ -1,14 +1,14 @@
 import os
 import subprocess
-from sqlalchemy import create_engine
-from auth import generate_token, token_required
+from auth import generate_token, token_required, store_token, clear_token
+
 
 
 # Obtener la URL de la base de datos desde las variables de entorno
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///default.db')
 
 # Crear una conexión a la base de datos
-engine = create_engine(DATABASE_URL)
+# zengine = create_engine(DATABASE_URL)
 
 # Simulamos un pequeño sistema de usuarios
 USERS = {
@@ -20,7 +20,8 @@ def login(username, password):
     if USERS.get(username) == password:
         # Si las credenciales son correctas, generamos un token
         token = generate_token(user_id=username)
-        return f"Token: {token}"
+        store_token(token) # Almacena el token
+        return f"Login exitoso. Token almacenado."
     else:
         return "Credenciales inválidas"
 
@@ -29,8 +30,8 @@ def login(username, password):
 # Aquí podrías realizar operaciones sobre la base de datos
 print(f"Conectado a la base de datos: {DATABASE_URL}")
 
-
-def instalar_paquete(paquete):
+@token_required
+def instalar_paquete(current_user, paquete):
     try:
         # Ejecutamos el comando pip install para instalar el paquete
         resultado = subprocess.run(
@@ -46,7 +47,8 @@ def instalar_paquete(paquete):
     except subprocess.CalledProcessError as e:
         print(F"Error al intentar instalar el paquete '{paquete}': {e.stderr}")    
 
-def actualizar_paquete(paquete):
+@token_required
+def actualizar_paquete(current_user, paquete):
     try:
         resultado = subprocess.run(
             ['pip', 'install', '--upgrade', paquete],
@@ -61,7 +63,7 @@ def actualizar_paquete(paquete):
         print(f"Error al intentar actualizar el paquete '{paquete}': {e.stderr}")
 
 @token_required
-def desinstalar_paquete(current_user, token, paquete):
+def desinstalar_paquete(current_user, paquete):
     try:
         resultado = subprocess.run(
             ['pip', 'uninstall', '-y', paquete],
@@ -77,7 +79,7 @@ def desinstalar_paquete(current_user, token, paquete):
         print(f"Error al intentar desinstalar el paquete '{paquete}': {e.stderr}")
 
 @token_required
-def listar_paquetes(current_user, token):
+def listar_paquetes(current_user):
     """Funcion protegida para listar paquetes, requiere autenticacion"""
     try:
         resultado = subprocess.run(
@@ -103,38 +105,39 @@ def main():
     password = input("Contraseña: ")
 
     # Proceso de login
-    token_response = login(username, password)
-    print(token_response)
+    message_login = login(username, password)
+    print(message_login)
 
-    if "Token: " in token_response:
-        token = token_response.split("Token: ")[1]
-        
-        print("\nOpciones:")
-        print("1. Instalar paquete")
-        print("2. Actualizar paquete")
-        print("3. Desinstalar paquete")
-        print("4. Listar paquetes")
+    # Continuar si el login fue exitoso
+    if "Token almacenado" not in message_login:
+        return
 
-    opcion = input("Seleccione una opcion (1/2/3/4): ")
+    print("\nOpciones:")
+    print("1. Instalar paquete")
+    print("2. Actualizar paquete")
+    print("3. Desinstalar paquete")
+    print("4. Listar paquetes")
+    print("5. Cerrar sesión")
+
+    opcion = input("Seleccione una opcion (1/2/3/4/5): ")
 
     if opcion == "1":
         paquete = input("Introduce el nombre del paquete que deseas instalar: ")
-        instalar_paquete(paquete)
+        instalar_paquete(paquete=paquete)
     elif opcion == "2":
         paquete = input("Introduce el nombre del paquete que deseas actualizar: ")
-        actualizar_paquete(paquete)
+        actualizar_paquete(paquete=paquete)
     elif opcion == "3":
         paquete = input("Introduce el nombre del paquete que deseas desinstalar: ")
-        desinstalar_paquete(current_user=username, token=token, paquete=paquete)
-
+        desinstalar_paquete(paquete=paquete)
     elif opcion == "4":
-        user_token = input("Ingrese su token: ")
-        try:
-            listar_paquetes(token=user_token)
-        except Exception as e:
-            print(f"Error: {e}")
+        listar_paquetes()
+    elif opcion == "5":
+        clear_token()
+        print("Sesión cerrada. El token ha sido eliminado.")
     else:
-        print("Opcion no valida. Por favor, selecciona 1, 2, 3 ó 4.")
+        print("Opcion no valida. Por favor, selecciona 1, 2, 3, 4 ó 5.")
+
 
 
 if __name__ == "__main__":
